@@ -1,42 +1,29 @@
-# Ivaylo's dotfiles
+# Luxloop New Computer Setup/Dotfiles
 
-* This is a constantly evolving repo of my user defaults, but you are more than welcome to use it. 
+This is the starting config for new general computers (i.e. MacMini's for installations). The idea is to set up a consistent build environment and some smart defaults and user shortcuts to reduce stress later on.
 
-* I work on OS X 99% of the time, but most of the config files should work on Linux.
+After seting up these dotfiles, the new computer should be ready to go with:
+* node
+* ruby
+* mono
+* homebrew (installed in user folder, not globally)
+* `zsh` as the default shell, with some nifty plugins
+* a ton of git shortcuts and helpers (see `.gitconfig`, `.aliases`, and `.functions`)
+* a pretty thorough Sublime Text 3 Setup
+* some basic vim plugins
  
-* I forked [Paul Irish](https://github.com/paulirish/dotfiles), but he recommends forking [Mathias](https://github.com/mathiasbynens/dotfiles/) or [Alrra](https://github.com/alrra/dotfiles/).
- 
+This is copied (not forked) from [ivaylopg](https://github.com/ivaylopg/dotfiles)'s dotfiles as a starting point. There is more documentation and attribution there, as well as in the code comments for various components.
 
 ## Setup
-#### installing & using
 
-* fork this to your own account
-* clone *that* repo
-* read and run parts of `setup-a-new-machine.sh`
-* read and run `symlink-setup.sh`
+### Prerequisites
+* If you don't have xcode installed, this will prompt you to install the just the command line tools. I suggest just installing xcode first.
+* Setup SSH keys for github (instructions [here]()) and gitlab (instructions [here]()), ideally as a new/unique user.
 
 
-## *My* favorite parts.
-
-### [`.aliases`](https://github.com/ivaylopg/dotfiles/blob/master/.aliases)
-
-The aliases are cherry-picked from a few different sources and I'm pretty happy with where they ended up. There are a few nice git aliases in the `.gitconfig` too.
-
-### [`.zshrc`](https://github.com/paulirish/dotfiles/blob/master/.zshrc)
-
-I'm totally into `zsh`, but `oh-my-zsh` felt too wierd and opinionated, and added a lot of aliases I didn't like. I set my shell up using `antigen`, but when I realized that it was still checking-out oh-my-zsh I got grumpy.
-
-I now have it set up so that I can just copy libs or plug-ins that I like from oh-my-zsh into the `dotfiles/zshConfig` folder. Sure, I lose git tracking for those libs, but I think I'm OK with that. Oh-my-zsh theme files still work. Just put them in `dotfiles/zshThemes`.
-
-
-
-### Sensible OS X defaults
-
-I think this is awesome. I wish I knew about this when I first got this computer. I've commented it out very aggresively so I can un-comment as needed.
-
-I also found this [link](http://azchipka.thechipkahouse.com/2014/09/14/commands-make-yosemite-suck-less/10496/), which offers consise explanations for what some of the more obscure options actually do.
-
-
-### Syntax highlighting for these files
-
-If you edit this stuff, install [Dotfiles Syntax Highlighting](https://github.com/mattbanks/dotfiles-syntax-highlighting-st2) via [Package Control](http://wbond.net/sublime_packages/package_control)
+### Instructions
+* Clone this repo into your home dir (`~`). **This location is important!**
+* `cd ~/dotfiles` and make sure you're running the scripts from there
+* Setup is split into several scripts to make troubleshooting easier. Execute each script one-by-one, starting with `00_backup.sh`, by running `./0X_SCRIPTNAME.sh`
+    * If this is the first time you're doing this, I suggest taking a look at each script before you run it, so that you know what's going on. Specifically, `02_brewAndNpm.sh` and `05_osxSetup.sh` have some things that have been commented-out that you might want to uncomment or run separately.
+* If you set this computer up with it's own git user (instead of hello@luxloop.com), make sure to change the user in `.gitconfig`
