@@ -1,0 +1,45 @@
+{
+	"bootstrapped": true,
+	"in_process_packages":
+	[
+	],
+	"installed_packages":
+	[
+		"Alignment",
+		"Better CoffeeScript",
+		"C# Snippets",
+		"Color Highlighter",
+		"DashDoc",
+		"DocBlockr",
+		"Dotfiles Syntax Highlighting",
+		"EasySettings",
+		"EditorConfig",
+		"Evaluate",
+		"Fix Mac Path",
+		"GitGutter",
+		"Google Spell Check",
+		"Handlebars",
+		"Highlighter",
+		"HTML5",
+		"Inc-Dec-Value",
+		"JavaScript Snippets",
+		"LoremIpsum",
+		"Markdown Extended",
+		"OmniSharp",
+		"Open URL",
+		"Package Control",
+		"Pretty JSON",
+		"Sass",
+		"ShaderLanguages",
+		"SideBarEnhancements",
+		"StandardFormat",
+		"sublime-github",
+		"SublimeLinter",
+		"SublimeLinter-contrib-eslint",
+		"SublimeOnSaveBuild",
+		"Swift",
+		"Unity Shader",
+		"Unity3D",
+		"View In Browser"
+	]
+}

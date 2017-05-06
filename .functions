@@ -1,0 +1,262 @@
+# Create a new directory and enter it
+function md() {
+	mkdir -p "$@" && cd "$@"
+}
+
+
+# find shorthand
+function f() {
+  find . -name "$1" 2>&1 | grep -v 'Permission denied'
+  # find . -name "$1" 2>/dev/null
+}
+
+
+# cd into whatever is the forefront Finder window.
+cdf() {  # short for cdfinder
+  cd "`osascript -e 'tell app "Finder" to POSIX path of (insertion location as alias)'`"
+}
+
+
+# Start an HTTP server from a directory, optionally specifying the port
+function startserver() {
+	local port="${1:-8000}"
+	open "http://localhost:${port}/"
+	# Set the default Content-Type to `text/plain` instead of `application/octet-stream`
+	# And serve everything as UTF-8 (although not technically correct, this doesn’t break anything for binary files)
+
+  #python -c $'import SimpleHTTPServer;\nmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\nmap[""] = "text/plain";\nfor key, value in map.items():\n\tmap[key] = value + ";charset=UTF-8";\nSimpleHTTPServer.test();' "$port"
+
+  #improved no-cache version
+  python -c $'import SimpleHTTPServer\n\nclass MyHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):\n\tdef end_headers(self):\n\t\tself.send_my_headers()\n\t\tSimpleHTTPServer.SimpleHTTPRequestHandler.end_headers(self)\n\n\tdef send_my_headers(self):\n\t\tself.send_header("Cache-Control", "no-cache, no-store, must-revalidate")\n\t\tself.send_header("Pragma", "no-cache")\n\t\tself.send_header("Expires", "0")\n\n\nif __name__ == "__main__":\n\tmap = SimpleHTTPServer.SimpleHTTPRequestHandler.extensions_map;\n\tmap[""] = "text/plain";\n\tfor key, value in map.items():\n\t\tmap[key] = value + ";charset=UTF-8";\n\tSimpleHTTPServer.test(HandlerClass=MyHTTPRequestHandler)' "$port"
+}
+
+
+# Copy w/ progress
+copy () {
+  rsync -WavP --human-readable --progress $1 $2
+}
+
+# ROT13-encode text. Works for decoding, too!
+# Numbers are encoded through ROT5
+# I use this encoding to hide contact info from screen readers in webpages:
+# https://gist.github.com/sammy0025/6672775
+function rot13and5(){
+	echo $1 | tr a-zA-Z0-9 n-za-mN-ZA-M5-90-4;
+}
+
+function rot13(){
+  echo $1 | tr a-zA-Z n-za-mN-ZA-M;
+}
+
+# rbenv dispatcher
+rbenv() {
+  local command
+  command="$1"
+  if [ "$#" -gt 0 ]; then
+    shift
+  fi
+
+  case "$command" in
+  rehash|shell)
+    eval "$(rbenv "sh-$command" "$@")";;
+  *)
+    command rbenv "$command" "$@";;
+  esac
+}
+
+
+# get gzipped size
+function gz() {
+	echo "orig size    (bytes): "
+	cat "$1" | wc -c
+	echo "gzipped size (bytes): "
+	gzip -c "$1" | wc -c
+}
+
+# whois a domain or a URL
+function whois() {
+	local domain=$(echo "$1" | awk -F/ '{print $3}') # get domain from URL
+	if [ -z $domain ] ; then
+		domain=$1
+	fi
+	echo "Getting whois record for: $domain …"
+
+	# avoid recursion
+					# this is the best whois server
+													# strip extra fluff
+	/usr/bin/whois -h whois.internic.net $domain | sed '/NOTICE:/q'
+}
+
+#change MAC address of interface until reboot
+function spoofmac() {
+    #$1 = interface
+    #$2 = mac address
+    sudo ifconfig $1 ether $2
+}
+
+function portforward() {
+    #ssh -N -L 27017:127.0.0.1:27017 SERVER
+    PORT="$1";
+    shift;
+    ssh -N -L "$PORT":127.0.0.1:"$PORT" "$@"
+}
+
+function portforwardport() {
+    LOCAL="$1";
+    shift;
+    REMOTE="$1";
+    shift;
+    ssh -N -L "$LOCAL":127.0.0.1:"$REMOTE" "$@"
+}
+
+function remote_portforward() {
+    #ssh -N -L 27017:127.0.0.1:27017 SERVER
+    PORT="$1";
+    shift;
+    ssh -N -R "$PORT":127.0.0.1:"$PORT" "$@"
+}
+
+function remote_portforwardport() {
+    REMOTE="$1";
+    shift;
+    LOCAL="$1";
+    shift;
+    ssh -N -R "$REMOTE":127.0.0.1:"$LOCAL" "$@"
+}
+
+# Extract archives - use: extract <file>
+# Based on http://dotfiles.org/~pseup/.bashrc
+function extract() {
+	if [ -f "$1" ] ; then
+		local filename=$(basename "$1")
+		local foldername="${filename%%.*}"
+		local fullpath=`perl -e 'use Cwd "abs_path";print abs_path(shift)' "$1"`
+		local didfolderexist=false
+		if [ -d "$foldername" ]; then
+			didfolderexist=true
+			read -p "$foldername already exists, do you want to overwrite it? (y/n) " -n 1
+			echo
+			if [[ $REPLY =~ ^[Nn]$ ]]; then
+				return
+			fi
+		fi
+		mkdir -p "$foldername" && cd "$foldername"
+		case $1 in
+			*.tar.bz2) tar xjf "$fullpath" ;;
+			*.tar.gz) tar xzf "$fullpath" ;;
+			*.tar.xz) tar Jxvf "$fullpath" ;;
+			*.tar.Z) tar xzf "$fullpath" ;;
+			*.tar) tar xf "$fullpath" ;;
+			*.taz) tar xzf "$fullpath" ;;
+			*.tb2) tar xjf "$fullpath" ;;
+			*.tbz) tar xjf "$fullpath" ;;
+			*.tbz2) tar xjf "$fullpath" ;;
+			*.tgz) tar xzf "$fullpath" ;;
+			*.txz) tar Jxvf "$fullpath" ;;
+			*.zip) unzip "$fullpath" ;;
+			*) echo "'$1' cannot be extracted via extract()" && cd .. && ! $didfolderexist && rm -r "$foldername" ;;
+		esac
+	else
+		echo "'$1' is not a valid file"
+	fi
+}
+
+# Print nyan cat
+# https://github.com/steckel/Git-Nyan-Graph/blob/master/nyan.sh
+# (modified to work with oh-my-zsh theme color-functions)
+function nyan() {
+    clear
+    echo
+    echo -en $fg[red]'-_-_-_-_-_-_-_'
+    echo -e $fg_bold[white]',------,'
+    echo -en $fg[yellow]'_-_-_-_-_-_-_-'
+    echo -e $fg_bold[white]'|   /\_/\\'
+    echo -en $fg[green]'-_-_-_-_-_-_-'
+    echo -e $fg_bold[white]'~|__( ^ .^)'
+    echo -en $fg[cyan]'-_-_-_-_-_-_-'
+    echo -e $fg_bold[white]' ""  ""'
+    echo
+    echo
+}
+
+function gitclearhistory() {
+  git filter-branch --force --index-filter 'git rm --cached $@' --prune-empty --tag-name-filter cat -- --all
+}
+
+# Opens a man (manual page) in Preview (like a PDF)
+#   Written by https://github.com/tamalw
+function pman() {
+  man -t "${1}" | open -f -a /Applications/Preview.app/
+}
+
+# Shows commits you haven't pushed to the remote yet.  Accepts same
+# arguments as git-log.  Assumes 'origin' is the default remote if no
+# branch.Foo.remote configuration exists.
+# https://github.com/moubry/dotfiles/blob/master/git-notpushed
+function gnp() {
+  curr_branch=$(git symbolic-ref -q HEAD | sed -e 's|^refs/heads/||')
+  origin=$(git config --get "branch.$curr_branch.remote")
+  origin=${origin:-origin}
+
+  git log $@ $curr_branch ^remotes/$origin/$curr_branch
+}
+
+function verifydisk() {
+  if [[ $# = 0 ]]; then
+    diskutil verifyVolume /
+  else
+    diskutil verifyVolume "$@"
+  fi
+}
+
+function repairdisk() {
+  if [[ $# = 0 ]]; then
+    diskutil repairvolume /
+  else
+    diskutil repairvolume "$@"
+  fi
+}
+
+# CanIUse.com Command Line Search Utility
+# Michael Wales, http://github.com/walesmd
+caniuse() {
+    local domain="http://caniuse.com/"
+    local query
+
+    if [ $# -eq 0 ]; then
+        open ${domain}
+    else
+        for term in "$@"; do
+            query=$(python -c "import sys, urllib as ul; print ul.quote('${term}');")
+            open "${domain}#search=${query}"
+        done
+    fi
+}
+
+function gitbo() {
+  gibo $@ >> .gitignore
+}
+
+function timelapse() {
+  i=1;while [ 1 ];do screencapture -t jpg -x "$@"/$i.jpg; let i++;sleep 5; done
+}
+
+
+# Shows human-readable size of the given filesystem elements.
+# $* (optional) = paths to files or folders of which the size is to be computed. If none are passed, defaults to the current directory.
+# Author: Matti Schneider <hi@mattischneider.fr>
+sizeof() {
+  if [[ $# = 0 ]]
+  then du -hc "." | tail -n 1
+  fi
+
+  for file in "$@"
+  do du -hc "$file" | tail -n 1
+  done
+}
+
+# `shellswitch bash`
+# `shellswitch zsh`
+shellswitch () {
+	chsh -s $(brew --prefix)/bin/$1
+}
