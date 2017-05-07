@@ -85,12 +85,12 @@ append_to_path() {
 npm_install_g() {
   if ! command -v node >/dev/null; then
     fancy_echo "Installing Node ..."
-    brew_install_or_upgrade node
+    nvm install node
     fancy_echo "npm is installing: %s" "$1"
-    sudo npm install -g $@
+    npm install -g $@
   else
     fancy_echo "npm is installing: %s" "$1"
-    sudo npm install -g $@
+    npm install -g $@
   fi
 }
 
@@ -119,7 +119,7 @@ brew_install_or_upgrade coreutils
 
 
 cask_install java
-brew_install_or_upgrade node #and npm
+# brew_install_or_upgrade node #and npm
 brew_install_or_upgrade rbenv
 brew_install_or_upgrade grc
 brew_install_or_upgrade mono
@@ -175,9 +175,10 @@ brew cask cleanup
 
 #npm globals
 npm_install_g git-open
-npm_install_g eslint
 npm_install_g gulp-cli
 npm_install_g nodemon
 npm_install_g standard-format
 npm_install_g github-email
-npm_install_g eslint-config-luxloop
+npm_install_g "eslint eslint-config-luxloop"
+#npm_install_g eslint-config-luxloop
+    # see: https://github.com/npm/npm/issues/9857
