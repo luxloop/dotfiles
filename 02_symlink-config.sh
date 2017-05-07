@@ -115,6 +115,8 @@ main() {
       done
 
     fi
+
+    print_info "Please close this terminal session and continue in a new one"
 }
 
 main
