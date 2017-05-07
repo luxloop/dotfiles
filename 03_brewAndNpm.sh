@@ -95,7 +95,7 @@ npm_install_g() {
 }
 
 trap 'ret=$?; test $ret -ne 0 && printf "failed\n\n" >&2; exit $ret' EXIT
-set -e
+# set -e
 
 if ! command -v brew >/dev/null; then
   fancy_echo "Installing Homebrew ..."
@@ -152,7 +152,7 @@ brew_install_or_upgrade bfg
 
 brew cleanup
 brew_tap caskroom/versions
-cask_install sublime-text3
+cask_install sublime-text
 cask_install google-chrome
 cask_install imagealpha
 cask_install imageoptim
@@ -174,6 +174,7 @@ brew cask cleanup
 #sudo easy_install pip
 
 #npm globals
+source $NVM_DIR/nvm.sh
 npm_install_g git-open
 npm_install_g gulp-cli
 npm_install_g nodemon

@@ -37,4 +37,5 @@ This is copied (not forked) from [ivaylopg](https://github.com/ivaylopg/dotfiles
     * You may be prompted to close and re-open *Terminal* for some changes to take effect.
     * If this is the first time you're doing this, I suggest taking a look at each script before you run it, so that you know what's going on. Specifically, `03_brewAndNpm.sh` and `05_osxSetup.sh` have some things that have been commented-out that you might want to uncomment or run separately.
 * If you set this computer up with it's own git user (instead of hello@luxloop.com), make sure to change the user in `.gitconfig`
+* You have to manually install package control in Sublime Text 3 the first time you run it for it to install all the configured packages
 * Update the terminal preferences to use the profile in `~/dotfiles/misc/luxloop.terminal`

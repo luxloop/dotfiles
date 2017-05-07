@@ -38,6 +38,7 @@ main() {
     local targetFile=""
 
     sudo chown -R $(whoami) /usr/local
+    mkdir -p /usr/local/bin
 
     for i in ${FILES_TO_SYMLINK[@]}; do
 
